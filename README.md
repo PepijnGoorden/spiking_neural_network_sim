@@ -9,6 +9,7 @@ Note: Future updates will likely include methods for immediate observation of pa
 
 Key features include neuron and connection creation with an intuitive interface for network construction and modification. This tool serves as a practical resource for neural network, machine learning, and AI enthusiasts, promoting active engagement and deeper understanding of SNNs and Liquid Neural Networks.
 
+![Preview Image](preview.png)
 
 ## Features
 - Neuron creation and connection
