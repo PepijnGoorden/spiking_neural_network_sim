@@ -1,7 +1,5 @@
 # Spiking Neural Network Simulation
-
-### Visual Simulation of Spiking Neural Networks: A Tool for Experimentation and Analysis.
-_A visual simulation tool designed for the exploration and analysis of spiking neural networks (SNNs)._
+### A visual simulation tool designed for the exploration and analysis of spiking neural networks (SNNs).
 
 Users can create custom networks of neurons and connections, enabling experimentation with various training methods and topologies. The tool provides real-time visualization of neural spiking activity. 
 
