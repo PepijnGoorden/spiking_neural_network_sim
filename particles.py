@@ -128,3 +128,24 @@ def update_and_draw_particles(screen, dt):
         
         # Directly blit the particle image
         screen.blit(particle.image, draw_pos)
+
+# Drawing utilities
+def create_vignette_surface(width, height, outer_alpha=128, center_radius=0.5, color=(0, 0, 0)):
+    vignette_surface = pygame.Surface((width, height), pygame.SRCALPHA)
+    center_x, center_y = width // 2, height // 2
+    max_distance = math.sqrt(center_x**2 + center_y**2) * center_radius
+
+    for y in range(height):
+        for x in range(width):
+            distance = math.sqrt((x - center_x)**2 + (y - center_y)**2)
+            if distance < max_distance:
+                alpha = 0
+            else:
+                alpha = int(((distance - max_distance) / (max_distance * (1 / center_radius))) * outer_alpha)
+                alpha = min(alpha, outer_alpha)
+            vignette_surface.set_at((x, y), color + (alpha,))
+    
+    return vignette_surface
+
+# Create vignette surface
+vignette = create_vignette_surface(WINDOW_WIDTH, WINDOW_HEIGHT, 100, 0.3)

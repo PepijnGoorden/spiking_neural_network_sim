@@ -86,6 +86,9 @@ while is_running:
     if dragging and rope:
         draw_rope(screen, rope)
 
+    # Draw vignette on top of everything
+    screen.blit(vignette, (0, 0))
+
     # update the display
     pygame.display.flip()
 
