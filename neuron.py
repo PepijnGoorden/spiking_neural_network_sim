@@ -23,6 +23,8 @@ class Neuron:
         self.resting_voltage = 0  # Initial resting_voltage
         self.resting_time_constant = R1 * C1  # Time constant
         self.external_stimulation = 0
+        self.weight = 0.25
+        self.trainig_factor = 0.01
 
     def draw(self, screen, current_mouse_offset):
         color = SPIKE_COLOR if self.state_active else NEURON_COLOR #Change SPIKE_COLOR in dark mode
@@ -31,11 +33,14 @@ class Neuron:
         screen_pos = (int(self.x + parallax_offset.x), int(self.y + parallax_offset.y))
         pygame.draw.circle(screen, color, screen_pos, NEURON_RADIUS + self.resting_voltage)
 
-        # # Draw the resting voltage text
-        # font = pygame.font.Font(None, 24)  # You may need to adjust the font size
-        # text = font.render(f"{self.resting_voltage:.2f}", True, (0, 0, 0))  # White text
-        # text_pos = (screen_pos[0] + NEURON_RADIUS + 5, screen_pos[1] - 12)  # Position to the right of the neuron
-        # screen.blit(text, text_pos)
+        # Draw the resting voltage text
+        font = pygame.font.Font(None, 24)  # You may need to adjust the font size
+        text = font.render(f"{self.resting_voltage:.2f}", True, (0, 0, 0))
+        text_pos = (screen_pos[0] - (NEURON_RADIUS * 1.5), screen_pos[1] + NEURON_RADIUS + 5)  # Position under the neuron
+        screen.blit(text, text_pos)
+        text = font.render(f"{self.weight:.2f}", True, (0, 0, 0))
+        text_pos = (screen_pos[0] - (NEURON_RADIUS * 1.5), screen_pos[1] + NEURON_RADIUS + 20)  # Position under the neuron
+        screen.blit(text, text_pos)
             
     def is_clicked(self, pos, current_mouse_offset):
         # Calculate parallax offset assuming neurons are always at the focus depth
@@ -75,7 +80,8 @@ class Neuron:
                     connection.animation_progress += dt * SIGNAL_PROPAGATION_FACTOR
                     if connection.animation_progress >= connection.segments:
                         connection.is_animating = False
-                        connection.connected_to.external_stimulation += 25
+                        self.weight += self.trainig_factor
+                        connection.connected_to.external_stimulation += 25 * self.weight
                     else:
                         all_animations_finished = False
             
@@ -87,8 +93,10 @@ class Neuron:
             if self.external_stimulation > 0:
                 self.resting_voltage += (V_MAX - self.resting_voltage) * (self.external_stimulation * dt / self.resting_time_constant)
             
-            # Decay resting voltage
+            # Decay resting voltage and weight
             self.resting_voltage *= math.exp(-dt / self.resting_time_constant)
+            if self.weight > 0.1:
+                self.weight -= self.trainig_factor / 100
             
             # Check if threshold is reached
             if self.resting_voltage >= V_THRESHOLD:
