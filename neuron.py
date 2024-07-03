@@ -35,7 +35,7 @@ class Neuron:
         self.weight = 0.25
         self.trainig_factor = 0.01
 
-    def draw(self, screen, current_mouse_offset):
+    def draw(self, screen, current_mouse_offset, neuron_info):
         color = SPIKE_COLOR if self.state_active else NEURON_COLOR #Change SPIKE_COLOR in dark mode
         # Calculate parallax offset assuming neurons are always at the focus depth
         parallax_offset = current_mouse_offset * (1 - (FOCUS_DEPTH / MAX_DEPTH)) * PARALAX_SCALE
@@ -43,13 +43,14 @@ class Neuron:
         pygame.draw.circle(screen, color, screen_pos, NEURON_RADIUS + self.resting_voltage)
 
         # Draw the resting voltage text
-        font = pygame.font.Font(None, 24)  # You may need to adjust the font size
-        text = font.render(f"{self.resting_voltage:.2f}", True, (0, 0, 0))
-        text_pos = (screen_pos[0] - (NEURON_RADIUS * 1.5), screen_pos[1] + NEURON_RADIUS + 5)  # Position under the neuron
-        screen.blit(text, text_pos)
-        text = font.render(f"{self.weight:.2f}", True, (0, 0, 0))
-        text_pos = (screen_pos[0] - (NEURON_RADIUS * 1.5), screen_pos[1] + NEURON_RADIUS + 20)  # Position under the neuron
-        screen.blit(text, text_pos)
+        if neuron_info:
+            font = pygame.font.Font(None, 24)  # You may need to adjust the font size
+            text = font.render(f"{self.resting_voltage:.2f}", True, (0, 0, 0))
+            text_pos = (screen_pos[0] - (NEURON_RADIUS * 1.5), screen_pos[1] + NEURON_RADIUS + 5)  # Position under the neuron
+            screen.blit(text, text_pos)
+            text = font.render(f"{self.weight:.2f}", True, (0, 0, 0))
+            text_pos = (screen_pos[0] - (NEURON_RADIUS * 1.5), screen_pos[1] + NEURON_RADIUS + 20)  # Position under the neuron
+            screen.blit(text, text_pos)
             
     def is_clicked(self, pos, current_mouse_offset):
         # Calculate parallax offset assuming neurons are always at the focus depth

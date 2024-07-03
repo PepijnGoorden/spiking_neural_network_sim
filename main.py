@@ -16,12 +16,14 @@ particle_timer_event = setup_particle_timer()
 for _ in range(MAX_PARTICLE_COUNT):
     spawn_background_particle(False)
 
+global neuron_info
+neuron_info = True
+
 # Main loop
 while is_running:
     dt = clock.tick(60) / 1000.0  # Delta time in seconds
     mouse_pos = pygame.mouse.get_pos()
     update_mouse_offset(dt, mouse_pos)
-    #print(len(neurons))
     #print(len(particle_group))
 
     for event in pygame.event.get():
@@ -55,6 +57,9 @@ while is_running:
                     from_neuron.add_connection(to_neuron)
                 from_neuron = None
                 rope = None
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                neuron_info = not neuron_info
 
     # Check if mouse hovers a neuron
     hovered_neuron = get_neuron_at_pos(pygame.mouse.get_pos())
@@ -79,7 +84,7 @@ while is_running:
 
     # Draw neurons
     for neuron in neurons:
-        neuron.draw(screen, current_mouse_offset)
+        neuron.draw(screen, current_mouse_offset, neuron_info)
         neuron.draw_connections(screen, current_mouse_offset)
 
     # Draw the rope if dragging
