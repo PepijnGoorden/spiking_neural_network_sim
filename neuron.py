@@ -40,7 +40,7 @@ class Neuron:
         # Calculate parallax offset assuming neurons are always at the focus depth
         parallax_offset = current_mouse_offset * (1 - (FOCUS_DEPTH / MAX_DEPTH)) * PARALAX_SCALE
         screen_pos = (int(self.x + parallax_offset.x), int(self.y + parallax_offset.y))
-        pygame.draw.circle(screen, color, screen_pos, NEURON_RADIUS + self.resting_voltage)
+        pygame.draw.circle(screen, color, screen_pos, NEURON_RADIUS)
 
         # Draw the resting voltage text
         if neuron_info:
