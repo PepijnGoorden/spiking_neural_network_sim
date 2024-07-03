@@ -14,6 +14,8 @@ Key features include neuron and connection creation with an intuitive interface 
 - Simulation of neuron firing and signal propagation
 - Visual representation of neurons and their connections
 
+![Preview Image](preview.gif)
+
 ## Installation
 1. Clone this repository
 2. Install required packages: `pip install -r requirements.txt`
@@ -24,6 +26,7 @@ Key features include neuron and connection creation with an intuitive interface 
 2. Remove Neurons: Right-click a neuron to remove it.
 3. Connect Neurons: Left-click and drag from one neuron to another to create a connection.
 4. Stimulate Neurons: Hover over a neuron with the mouse to stimulate it.
+5. Toggle weigts and potential: Press the Spacebar any where
 
 ## Contributing
 Currently, this project is not open for contributions. We may consider accepting contributions in the future.
