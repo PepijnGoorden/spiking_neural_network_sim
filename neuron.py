@@ -1,9 +1,18 @@
 import pygame
 import math
 from settings import *
+import os
+
+pygame.init()
+pygame.display.set_mode((1, 1), pygame.NOFRAME)
 
 # Neuron list
 neurons = []
+
+# Load neuron sprites
+neurons_sprite_dir = "resources/img/neurons"
+connection_overlay_path = os.path.join(neurons_sprite_dir, f"connection_overlay.png")
+connection_overlay_sprite = pygame.image.load(connection_overlay_path).convert_alpha()
 
 class Connection:
     def __init__(self, neuron, target_neuron):
@@ -137,6 +146,23 @@ class Neuron:
                     color = CONNECTION_COLOR
 
                 pygame.draw.line(screen, color, start, end, width)
+
+            # Calculate rotation angle
+            angle = math.degrees(math.atan2(to_pos.y - from_pos.y, to_pos.x - from_pos.x))
+            rotated_connection_overlay = pygame.transform.rotate(connection_overlay_sprite, -angle)
+
+            # Calculate the offset (half the sprite width is 12.5)
+            half_sprite_width = 12.5
+            angle_radians = math.radians(angle)
+            offset_x = half_sprite_width * math.cos(angle_radians)
+            offset_y = half_sprite_width * math.sin(angle_radians)
+
+            # Calculate the new position with the offset applied
+            offset_pos = (from_pos.x + offset_x, from_pos.y + offset_y)
+
+            # Draw the rotated sprite at the new position
+            first_segment = rotated_connection_overlay.get_rect(center=offset_pos)
+            screen.blit(rotated_connection_overlay, first_segment)
 
 # Rope stuff
 num_segments = CONNECTION_SEGMENTS
