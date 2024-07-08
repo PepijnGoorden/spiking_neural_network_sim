@@ -64,7 +64,9 @@ while is_running:
     # Update neurons
     for neuron in neurons:
         if hovered_neuron == neuron:
-            neuron.postsynaptic_action_potentials += 10
+            # Stimulate hovered neuron, if it is not firing
+            if not neuron.is_firing:
+                neuron.membrane_potential += 1
         neuron.update_neuron(dt)
 
     # Update rope if dragging

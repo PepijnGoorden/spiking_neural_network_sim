@@ -23,12 +23,15 @@ MAX_PARTICLE_COUNT = 20
 NEURON_RADIUS = 10
 NEURON_COLOR = BLACK
 SPIKE_COLOR = BLACK
+ACTION_POTENTIAL = 4
+TRAINING_INCREMENT = 0.01
 # RC Circuit parameters
 V_MAX = 5  # Maximum voltage in volts
 V_THRESHOLD = 0.6 * V_MAX  # Threshold voltage for spiking
 # RC parameters for resting state duration
 R1 = 10  # Resistance in ohms
 C1 = 0.1  # Capacitance in farads
+TAU = R1 * C1  # Time constant
 
 # Connections
 CONNECTION_SEGMENTS = 20  # Number of segments for the line

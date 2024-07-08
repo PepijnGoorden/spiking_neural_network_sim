@@ -21,10 +21,11 @@ connection_overlay_sprite = pygame.image.load(connection_overlay_path).convert_a
 class Connection:
     def __init__(self, neuron, target_neuron):
         self.connected_from = neuron
-        self.connected_to = target_neuron
+        self.receiving_neuron = target_neuron
         self.segments = CONNECTION_SEGMENTS
-        self.animation_progress = 0
-        self.is_animating = False
+        self.propagation_progress = 0
+        self.is_propagating = False
+        self.weight = 0.25 # Start weight
 
 class Neuron:
     def __init__(self, x, y):
@@ -34,56 +35,74 @@ class Neuron:
         self.connections_from = []  # Neurons that connect to this neuron
         self.is_firing = False # Is the neuron in the active state?
         self.membrane_potential = 0  # Stimulation level / membrane potential
-        self.resting_time_constant = R1 * C1  # Time constant
-        self.postsynaptic_action_potentials = 0 # Accumulation of stimulation signals
-        self.weight = 0.25
-        self.trainig_factor = 0.01
 
-    #Neuron Behavior
+    #NEURON BEHAVIOR
     def fire(self):
-        self.is_firing = True
-        for connection in self.connections_to:
-            connection.is_animating = True
-            connection.animation_progress = 0  # Reset animation progress when firing
-            self.membrane_potential = 0  # Reset stimulation level (membrane_potential) after firing
+        self.is_firing = True # Set is_firing flag
+        self.membrane_potential = 0  # Reset stimulation level (membrane_potential) after firing
 
-    def propogate_action_potentials(self, dt):
-        all_animations_finished = True
+        # Start propagation of action_potential through all connections
         for connection in self.connections_to:
-            if connection.is_animating:
-                connection.animation_progress += dt * AXON_SPEED_FACTOR
-                # When axon signal animation ends
-                if connection.animation_progress >= connection.segments:
-                    connection.is_animating = False
-                    self.weight += self.trainig_factor # Update Neuron Weight
-                    connection.connected_to.postsynaptic_action_potentials += 25 * self.weight # Stimulate receiving neuron
-                else:
-                    all_animations_finished = False
+            connection.is_propagating = True
+            connection.propagation_progress = 0  # Reset propagation progress when firing
+    
+    def propagate_action_potentials(self, dt):
+        # Find all connections that are currently propagating and store them in propagating_connections[]
+        propagating_connections = [connection for connection in self.connections_to if connection.is_propagating]
         
-        if all_animations_finished:
+        # Update each propagating connection
+        for connection in propagating_connections[:]: # "[:]" = "slice copy", a copy for safe modification while using it in the loop
+            # Increment propagation_progress 
+            connection.propagation_progress += dt * AXON_SPEED_FACTOR
+            
+            # Check if end of connection segments is reached -> Action potential reached the destination neuron
+            if connection.propagation_progress >= connection.segments:
+                # Stop propagation
+                connection.is_propagating = False
+                propagating_connections.remove(connection)
+
+                # Stimulate receiving neuron, if it is not firing
+                if not connection.receiving_neuron.is_firing:
+                    self.stimulate_receiving_neuron(connection)
+        
+        # Check if there are no more remaining active connections
+        if len(propagating_connections) <= 0:
             self.is_firing = False
+
+    def stimulate_receiving_neuron(self, connection):
+        # Modify action potential with connection weight
+        postsynaptic_action_potential = ACTION_POTENTIAL * connection.weight
+
+        # Stimulate receiving neuron: Increase the membrane potentials of the neuron this 'connection' is connected to (post synaptic neuron)
+        connection.receiving_neuron.membrane_potential += postsynaptic_action_potential
+
+        # Increase connection weight
+        connection.weight += TRAINING_INCREMENT
 
     # DRAW and UPDATE events
     def update_neuron(self, dt):
-        if self.is_firing: # If neuron is in active state
-            self.propogate_action_potentials(dt)            
+        # ACTIVE STATE
+        if self.is_firing:
+            self.propagate_action_potentials(dt)            
 
-        else: # If neuron is in resting state
-            # Apply external stimulation
-            if self.postsynaptic_action_potentials > 0:
-                self.membrane_potential += (V_MAX - self.membrane_potential) * (self.postsynaptic_action_potentials * dt / self.resting_time_constant)
+        # RESTING STATE
+        else:
+            # # Apply external stimulation
+            # if self.membrane_potential > 0:
+            #     self.membrane_potential += (V_MAX - self.membrane_potential) * (self.membrane_potential * dt / self.resting_time_constant)
             
-            # Decay resting voltage and weight
-            self.membrane_potential *= math.exp(-dt / self.resting_time_constant)
-            if self.weight > 0.1:
-                self.weight -= self.trainig_factor / 100
+            # Decay membrane_potential
+            self.membrane_potential *= math.exp(-dt / TAU)
+
+            for connection in self.connections_to:
+                # if connection weight will not go below 0
+                if not connection.weight - (TRAINING_INCREMENT / 100) <= 0:
+                    # reduce the connection weight
+                    connection.weight -= TRAINING_INCREMENT / 100
             
             # Check if threshold is reached
             if self.membrane_potential >= V_THRESHOLD:
                 self.fire()
-        
-        # Reset external stimulation at the end of each update
-        self.postsynaptic_action_potentials = 0
 
     def draw_neuron(self, screen, current_mouse_offset, neuron_info):
         # Calculate parallax offset assuming neurons are always at the focus depth
@@ -92,24 +111,33 @@ class Neuron:
 
         # Draw the components
         self.draw_self(screen, screen_pos)
-        self. draw_connections(screen, parallax_offset)
-        self.draw_info(screen, screen_pos, neuron_info)
+        self.draw_connections(screen, parallax_offset)
+        self.draw_info(screen, parallax_offset, screen_pos, neuron_info)
 
     def draw_self(self, screen, screen_pos):
         # Draw the neuron
         color = SPIKE_COLOR if self.is_firing else NEURON_COLOR #Change SPIKE_COLOR in dark mode
         pygame.draw.circle(screen, color, screen_pos, NEURON_RADIUS)
 
-    def draw_info(self, screen, screen_pos, neuron_info):
-        # Draw membrane_potential and weight text
+    def draw_info(self, screen, parallax_offset, screen_pos, neuron_info):
+        # Draw membrane_potential info
         if neuron_info:
             font = pygame.font.Font(None, 24)  # You may need to adjust the font size
             text = font.render(f"{self.membrane_potential:.2f}", True, (0, 0, 0))
             text_pos = (screen_pos[0] - (NEURON_RADIUS * 1.5), screen_pos[1] + NEURON_RADIUS + 5)  # Position under the neuron
             screen.blit(text, text_pos)
-            text = font.render(f"{self.weight:.2f}", True, (0, 0, 0))
-            text_pos = (screen_pos[0] - (NEURON_RADIUS * 1.5), screen_pos[1] + NEURON_RADIUS + 20)  # Position under the neuron
-            screen.blit(text, text_pos)
+
+        # Draw connection weight info halfway the connection
+        for connection in self.connections_to:
+            if neuron_info:
+                position = (
+                    (connection.receiving_neuron.x + connection.connected_from.x) / 2 + parallax_offset[0], 
+                    (connection.receiving_neuron.y + connection.connected_from.y) / 2 + parallax_offset[1]
+                )
+                font = pygame.font.Font(None, 24)  # You may need to adjust the font size
+                text = font.render(f"{connection.weight:.2f}", True, (0, 0, 0))
+                text_pos = (position[0], position[1])  # Position under the connection
+                screen.blit(text, text_pos)
 
     def draw_connections(self, screen, parallax_offset):
         # Draw the connections
@@ -121,8 +149,8 @@ class Neuron:
             )
             # Apply the parallax offset to the ending position,
             to_pos = pygame.math.Vector2(
-                int(connection.connected_to.x + parallax_offset.x),
-                int(connection.connected_to.y + parallax_offset.y)
+                int(connection.receiving_neuron.x + parallax_offset.x),
+                int(connection.receiving_neuron.y + parallax_offset.y)
             )
 
             # Determine the segment length by getting the distance between to and from and deviding them by the number of segments
@@ -135,8 +163,8 @@ class Neuron:
                 end = from_pos + segment_vector * (i + 1)
                 
                 # Determine line width based on animation state
-                if connection.is_animating:
-                    progress = connection.animation_progress - i
+                if connection.is_propagating:
+                    progress = connection.propagation_progress - i
                     if 0 <= progress < 1:
                         width = 4
                         color = CONNECTION_COLOR #in dark mode, this could be awesome to light the signal
@@ -167,6 +195,7 @@ class Neuron:
             first_segment = rotated_connection_overlay.get_rect(center=offset_pos)
             screen.blit(rotated_connection_overlay, first_segment)
 
+
     # NEURON UTILITIES        
     def is_clicked(self, pos, current_mouse_offset):
         # Calculate parallax offset assuming neurons are always at the focus depth
@@ -176,18 +205,18 @@ class Neuron:
         return (adjusted_x - pos[0])**2 + (adjusted_y - pos[1])**2 < NEURON_RADIUS**2
 
     def add_connection(self, target_neuron):
-        if not any(connection.connected_to == target_neuron for connection in self.connections_to):
+        if not any(connection.receiving_neuron == target_neuron for connection in self.connections_to):
             new_connection = Connection(self, target_neuron)
             self.connections_to.append(new_connection)
             target_neuron.connections_from.append(self)
 
     def remove_connection(self, target_neuron):
-        self.connections_to = [connection for connection in self.connections_to if connection.connected_to != target_neuron]
+        self.connections_to = [connection for connection in self.connections_to if connection.receiving_neuron != target_neuron]
         target_neuron.connections_from.remove(self)
 
     def remove_all_connections(self):
         for connection in self.connections_to[:]:
-            self.remove_connection(connection.connected_to)
+            self.remove_connection(connection.receiving_neuron)
         for neuron in self.connections_from[:]:
             neuron.remove_connection(self)
 
