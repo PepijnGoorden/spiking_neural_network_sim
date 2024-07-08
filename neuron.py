@@ -61,6 +61,9 @@ class Neuron:
                 connection.is_propagating = False
                 propagating_connections.remove(connection)
 
+                # Increase connection weight
+                connection.weight += TRAINING_INCREMENT
+
                 # Stimulate receiving neuron, if it is not firing
                 if not connection.receiving_neuron.is_firing:
                     self.stimulate_receiving_neuron(connection)
@@ -75,9 +78,6 @@ class Neuron:
 
         # Stimulate receiving neuron: Increase the membrane potentials of the neuron this 'connection' is connected to (post synaptic neuron)
         connection.receiving_neuron.membrane_potential += postsynaptic_action_potential
-
-        # Increase connection weight
-        connection.weight += TRAINING_INCREMENT
 
     # DRAW and UPDATE events
     def update_neuron(self, dt):
@@ -110,14 +110,15 @@ class Neuron:
         screen_pos = (int(self.x + parallax_offset.x), int(self.y + parallax_offset.y))
 
         # Draw the components
-        self.draw_self(screen, screen_pos)
         self.draw_connections(screen, parallax_offset)
+        self.draw_self(screen, screen_pos)
         self.draw_info(screen, parallax_offset, screen_pos, neuron_info)
 
     def draw_self(self, screen, screen_pos):
         # Draw the neuron
-        color = SPIKE_COLOR if self.is_firing else NEURON_COLOR #Change SPIKE_COLOR in dark mode
-        pygame.draw.circle(screen, color, screen_pos, NEURON_RADIUS)
+        pygame.draw.circle(screen, NEURON_COLOR, screen_pos, NEURON_RADIUS)
+        if self.is_firing:
+            pygame.draw.circle(screen, SPIKE_COLOR, screen_pos, NEURON_RADIUS / 2)
 
     def draw_info(self, screen, parallax_offset, screen_pos, neuron_info):
         # Draw membrane_potential info
