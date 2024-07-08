@@ -16,9 +16,6 @@ particle_timer_event = setup_particle_timer()
 for _ in range(MAX_PARTICLE_COUNT):
     spawn_background_particle(False)
 
-global neuron_info
-neuron_info = True
-
 # Main loop
 while is_running:
     dt = clock.tick(60) / 1000.0  # Delta time in seconds
@@ -67,7 +64,7 @@ while is_running:
     # Update neurons
     for neuron in neurons:
         if hovered_neuron == neuron:
-            neuron.external_stimulation += 10
+            neuron.postsynaptic_action_potentials += 10
         neuron.update_neuron(dt)
 
     # Update rope if dragging
@@ -84,8 +81,7 @@ while is_running:
 
     # Draw neurons
     for neuron in neurons:
-        neuron.draw(screen, current_mouse_offset, neuron_info)
-        neuron.draw_connections(screen, current_mouse_offset)
+        neuron.draw_neuron(screen, current_mouse_offset, neuron_info)
 
     # Draw the rope if dragging
     if dragging and rope:

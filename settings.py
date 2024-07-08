@@ -34,4 +34,4 @@ C1 = 0.1  # Capacitance in farads
 CONNECTION_SEGMENTS = 20  # Number of segments for the line
 CONNECTION_GROWTH_SPEED = 0.4  # Speed at which the line segments grow
 CONNECTION_COLOR = BLACK
-SIGNAL_PROPAGATION_FACTOR = 100 # multiplies the speed of the signal propagation
+AXON_SPEED_FACTOR = 100 # multiplies the speed of the signal animation
