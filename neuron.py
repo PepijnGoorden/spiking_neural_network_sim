@@ -2,6 +2,7 @@ import pygame
 import math
 from settings import *
 import os
+from enum import Enum, auto
 
 pygame.init()
 pygame.display.set_mode((1, 1), pygame.NOFRAME)
@@ -27,14 +28,21 @@ class Connection:
         self.is_propagating = False
         self.weight = 0.25 # Start weight
 
+class NeuronType(Enum):
+    REGULAR = auto()
+    POSITION_INPUT = auto()
+    VELOCITY_INPUT = auto()
+    OUTPUT = auto()
+
 class Neuron:
-    def __init__(self, x, y):
+    def __init__(self, x, y, neuron_type):
         self.x = x
         self.y = y
         self.connections_to = []  # Connections to other neurons
         self.connections_from = []  # Neurons that connect to this neuron
         self.is_firing = False # Is the neuron in the active state?
         self.membrane_potential = 0  # Stimulation level / membrane potential
+        self.neuron_type = neuron_type
 
     #NEURON BEHAVIOR
     def fire(self):
@@ -83,7 +91,7 @@ class Neuron:
     def update_neuron(self, dt):
         # ACTIVE STATE
         if self.is_firing:
-            self.propagate_action_potentials(dt)            
+            self.propagate_action_potentials(dt)                        
 
         # RESTING STATE
         else:
@@ -116,9 +124,30 @@ class Neuron:
 
     def draw_self(self, screen, screen_pos):
         # Draw the neuron
-        pygame.draw.circle(screen, NEURON_COLOR, screen_pos, NEURON_RADIUS)
-        if self.is_firing:
-            pygame.draw.circle(screen, SPIKE_COLOR, screen_pos, NEURON_RADIUS / 2)
+        if self.neuron_type == NeuronType.REGULAR:
+            pygame.draw.circle(screen, NEURON_COLOR, screen_pos, NEURON_RADIUS)
+            # Draw neuron firing state
+            if self.is_firing:
+                pygame.draw.circle(screen, SPIKE_COLOR, screen_pos, NEURON_RADIUS / 2)
+        elif self.neuron_type == NeuronType.POSITION_INPUT:
+            pygame.draw.circle(screen, WHITE, screen_pos, NEURON_RADIUS)
+            pygame.draw.circle(screen, NEURON_COLOR, screen_pos, NEURON_RADIUS, width=4)
+            # Draw neuron firing state
+            if self.is_firing:
+                pygame.draw.circle(screen, NEURON_COLOR, screen_pos, NEURON_RADIUS / 2)
+        elif self.neuron_type == NeuronType.VELOCITY_INPUT:
+            pygame.draw.circle(screen, WHITE, screen_pos, NEURON_RADIUS)
+            pygame.draw.circle(screen, NEURON_COLOR, screen_pos, NEURON_RADIUS, width=2)
+            # Draw neuron firing state
+            if self.is_firing:
+                pygame.draw.circle(screen, NEURON_COLOR, screen_pos, NEURON_RADIUS / 2)
+        else:
+            pygame.draw.circle(screen, WHITE, screen_pos, NEURON_RADIUS)
+            pygame.draw.circle(screen, NEURON_COLOR, screen_pos, NEURON_RADIUS / 2)
+            pygame.draw.circle(screen, NEURON_COLOR, screen_pos, NEURON_RADIUS, width=2)
+            # Draw neuron firing state
+            if self.is_firing:
+                pygame.draw.circle(screen, SPIKE_COLOR, screen_pos, NEURON_RADIUS / 2)
 
     def draw_info(self, screen, parallax_offset, screen_pos, neuron_info):
         # Draw membrane_potential info

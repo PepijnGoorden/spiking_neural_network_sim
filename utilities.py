@@ -39,10 +39,10 @@ def get_neuron_at_pos(pos):
             return neuron
     return None
 
-def add_neuron(pos):
+def add_neuron(pos, neuron_type=NeuronType.REGULAR):
     parallax_offset = current_mouse_offset * (1 - (FOCUS_DEPTH / MAX_DEPTH)) * PARALAX_SCALE
     adjusted_pos = (pos[0] - parallax_offset.x, pos[1] - parallax_offset.y)
-    neurons.append(Neuron(*adjusted_pos))
+    neurons.append(Neuron(*adjusted_pos, neuron_type))
 
 def remove_neuron(neuron):
     neuron.remove_all_connections()
