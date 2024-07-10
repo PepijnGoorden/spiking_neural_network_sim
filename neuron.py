@@ -71,7 +71,7 @@ class Neuron:
                 propagating_connections.remove(connection)
 
                 # Increase connection weight
-                connection.weight += TRAINING_INCREMENT
+                connection.weight += TRAINING_RATE
 
                 # Stimulate receiving neuron, if it is not firing
                 if not connection.receiving_neuron.is_firing:
@@ -105,9 +105,9 @@ class Neuron:
 
             for connection in self.connections_to:
                 # if connection weight will not go below 0
-                if not connection.weight - (TRAINING_INCREMENT / 100) <= 0:
+                if not connection.weight - TRAINING_DECAY <= 0:
                     # reduce the connection weight
-                    connection.weight -= TRAINING_INCREMENT / 100
+                    connection.weight -= TRAINING_DECAY
             
             # Check if threshold is reached
             if self.membrane_potential >= V_THRESHOLD:

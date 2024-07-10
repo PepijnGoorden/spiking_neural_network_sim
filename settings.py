@@ -24,7 +24,8 @@ NEURON_RADIUS = 10
 NEURON_COLOR = BLACK
 SPIKE_COLOR = WHITE
 ACTION_POTENTIAL = 4
-TRAINING_INCREMENT = 0.01
+TRAINING_RATE = 0.01
+TRAINING_DECAY = TRAINING_RATE / 5
 # RC Circuit parameters
 V_MAX = 5  # Maximum voltage in volts
 V_THRESHOLD = 0.6 * V_MAX  # Threshold voltage for spiking
