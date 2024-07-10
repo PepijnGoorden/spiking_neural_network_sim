@@ -7,10 +7,6 @@ class TrainingSim:
     def __init__(self, width, height):
         self.WIDTH = width
         self.HEIGHT = height
-        
-        # Colors
-        self.WHITE = (255, 255, 255)
-        self.BLACK = (0, 0, 0)
 
         # Rocket properties
         self.rocket_width = 5
@@ -51,20 +47,20 @@ class TrainingSim:
 
     def draw(self, surface):
         # Clear the surface
-        surface.fill(self.WHITE)
+        surface.fill(WHITE)
         
         # Draw the rocket
-        pygame.draw.rect(surface, self.BLACK, (self.rocket_x, self.rocket_y, self.rocket_width, self.rocket_height))
+        pygame.draw.rect(surface, BLACK, (self.rocket_x, self.rocket_y, self.rocket_width, self.rocket_height))
         
         # Draw the center line
-        pygame.draw.line(surface, self.BLACK, (0, self.HEIGHT // 2), (self.WIDTH, self.HEIGHT // 2))
+        pygame.draw.line(surface, BLACK, (0, self.HEIGHT // 2), (self.WIDTH, self.HEIGHT // 2))
         
         # Draw the position_data
-        position_data_text = self.font.render(f"Position: {self.position_data * -1}", True, self.BLACK)
+        position_data_text = self.font.render(f"Position: {self.position_data * -1}", True, BLACK)
         surface.blit(position_data_text, (10, 10))
         
         # Draw the velocity
-        vel_text = self.font.render(f"Velocity: {self.velocity * -1:.2f}", True, self.BLACK)
+        vel_text = self.font.render(f"Velocity: {self.velocity * -1:.2f}", True, BLACK)
         surface.blit(vel_text, (10, 26))
 
 def create_training_sim(width, height):
