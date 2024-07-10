@@ -16,7 +16,7 @@ class TrainingSim:
         self.velocity = 0
         self.position_data = self.rocket_y
         self.gravity = 0.05
-        self.thrust = -0.3
+        self.thrust = -0.1
 
         # Velocity limits
         self.MIN_VEL = self.thrust * 10
