@@ -1,5 +1,6 @@
 import pygame
 import math
+from random import uniform
 from settings import *
 import os
 from enum import Enum, auto
@@ -26,7 +27,7 @@ class Connection:
         self.segments = CONNECTION_SEGMENTS
         self.propagation_progress = 0
         self.is_propagating = False
-        self.weight = 0.25 # Start weight
+        self.weight = uniform(0.1, 0.9) # Start weight
 
 class NeuronType(Enum):
     REGULAR = auto()
