@@ -88,12 +88,8 @@ def convert_game_output_to_neuron_input(position, velocity):
     normalized_velocity = (velocity + 3) / 6      # -3 to 3 -> 0 to 1
 
     # Convert normalized values to membrane potential increases
-    position_low_input = position_too_low * ACTION_POTENTIAL
-    position_high_input = position_too_high * ACTION_POTENTIAL
-    velocity_input = normalized_velocity * ACTION_POTENTIAL
+    position_low_input = position_too_low / 2 # * ACTION_POTENTIAL
+    position_high_input = position_too_high / 2 # * ACTION_POTENTIAL
+    velocity_input = normalized_velocity / 2 # * ACTION_POTENTIAL
 
-    return position_low_input, position_high_input, velocity_input
-
-def stimulate_neuron_with_game_output(position, velocity):
-    position_low_input, position_high_input, velocity_input = convert_game_output_to_neuron_input(position, velocity)
     return position_low_input, position_high_input, velocity_input

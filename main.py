@@ -150,11 +150,11 @@ while is_running:
                 is_thrusting = False
         if neuron.neuron_type == NeuronType.POSITION_INPUT:
             if not neuron.is_firing:
-                position_low_input, position_high_input, velocity_input = stimulate_neuron_with_game_output(training_sim.position_data, training_sim.velocity)
+                position_low_input, position_high_input, velocity_input = convert_game_output_to_neuron_input(training_sim.position_data, training_sim.velocity)
                 neuron.membrane_potential += position_low_input
         if neuron.neuron_type == NeuronType.VELOCITY_INPUT:
             if not neuron.is_firing:
-                position_low_input, position_high_input, velocity_input = stimulate_neuron_with_game_output(training_sim.position_data, training_sim.velocity)
+                position_low_input, position_high_input, velocity_input = convert_game_output_to_neuron_input(training_sim.position_data, training_sim.velocity)
                 neuron.membrane_potential += velocity_input
                 #print(f"Velocity: {velocity_input}")
         neuron.update_neuron(dt)
