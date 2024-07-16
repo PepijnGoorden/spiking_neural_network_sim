@@ -3,9 +3,11 @@ BLACK = (0, 0, 0)
 GRAY_900 = (40, 40, 40)
 GRAY_500 = (127, 127, 127)
 GRAY_300 = (170, 170, 170)
+GRAY_100 = (220, 220, 220)
 WHITE = (255, 255, 255)
 
-# Window size
+# Setup
+TITLE = "Neural Network Simulation"
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 900
 BG_COLOR = WHITE
@@ -28,7 +30,7 @@ NEURON_COLOR = BLACK
 SPIKE_COLOR = WHITE
 ACTION_POTENTIAL = 4
 STARTING_TRAINING_RATE = 0.01
-TRAINING_DECAY = STARTING_TRAINING_RATE / 5
+STARTING_TRAINING_DECAY_RATIO = 10 # between 30 and 5
 # RC Circuit parameters
 V_MAX = 5  # Maximum voltage in volts
 V_THRESHOLD = 0.6 * V_MAX  # Threshold voltage for spiking

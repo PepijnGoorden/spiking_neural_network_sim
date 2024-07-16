@@ -3,49 +3,31 @@ import pygame_gui
 import sys
 from random import randint, uniform
 from settings import *
+import globals
+from ui import *
 from utilities import *
 from particles import *
 from neuron import *
 from training_sim import *
-import globals
+
+#########
+ # SETUP #
+  #########
 
 # Initialize Pygame
-window_size, screen, clock, is_running = initial_setup()
+screen, clock, is_running = initial_setup()
 
+# UI #
 # Create a UI Manager
-ui_manager = pygame_gui.UIManager(window_size, 'bw_theme.json')
+ui_manager = pygame_gui.UIManager(globals.window_size, 'bw_theme.json')
 
-# Calculate positions
-slider_width = 150
-slider_height = 20
-textbox_width = 50
-textbox_height = 20
-margin_left = 20
-margin_bottom = 20
+# Create neuron training rate slider
+label, slider, textbox = create_neuron_training_rate_slider(ui_manager)
 
-# Create a label
-label = pygame_gui.elements.UILabel(
-    relative_rect=pygame.Rect((margin_left, window_size[1] - margin_bottom - slider_height - 30), (200, 30)),
-    text="Neuron Training Rate",
-    manager=ui_manager,
-    object_id=pygame_gui.core.ObjectID(class_id="@labels", object_id="#neuron_rate_label")
-)
+# Create neuron training decay ratio slider
+label1, slider1, textbox1 = create_neuron_training_decay_ratio_slider(ui_manager)
 
-# Create a slider
-slider = pygame_gui.elements.UIHorizontalSlider(
-    relative_rect=pygame.Rect((margin_left, window_size[1] - margin_bottom - slider_height), (slider_width, slider_height)),
-    start_value=globals.neuron_training_rate,
-    value_range=(0.001, 0.1),
-    manager=ui_manager
-)
-
-# Create a textbox
-textbox = pygame_gui.elements.UITextEntryLine(
-    relative_rect=pygame.Rect((margin_left + slider_width + 10, window_size[1] - margin_bottom - textbox_height), (textbox_width, textbox_height)),
-    manager=ui_manager
-)
-textbox.set_text(f"{slider.get_current_value():.3f}")
-
+# PARTICLES #
 # Setup particle timer
 particle_timer_event = setup_particle_timer()
 
@@ -53,6 +35,8 @@ particle_timer_event = setup_particle_timer()
 for _ in range(MAX_PARTICLE_COUNT):
     spawn_background_particle(False)
 
+# TRAINING SIM #
+# Create input neurons
 input1_position = pygame.math.Vector2(150 + NEURON_RADIUS, (WINDOW_HEIGHT / 2) - (UI_HEIGHT / 2))
 # input2_position = pygame.math.Vector2(150 + NEURON_RADIUS, (WINDOW_HEIGHT / 2) - (UI_HEIGHT / 2) + NEURON_RADIUS + 50)
 output_position = pygame.math.Vector2(WINDOW_WIDTH - 150 - NEURON_RADIUS, (WINDOW_HEIGHT / 2) - (UI_HEIGHT / 2))
@@ -65,7 +49,10 @@ TRAINING_WIDTH, TRAINING_HEIGHT = 200, 200
 training_sim = create_training_sim(TRAINING_WIDTH, TRAINING_HEIGHT)
 training_surface = pygame.Surface((TRAINING_WIDTH, TRAINING_HEIGHT))
 
-# Main loop
+#############
+ # Main loop #
+  #############
+
 while is_running:
     dt = clock.tick(60) / 1000.0  # Delta time in seconds
     mouse_pos = pygame.mouse.get_pos()
@@ -75,8 +62,8 @@ while is_running:
         if event.type == pygame.QUIT:
             is_running = False
         elif event.type == pygame.VIDEORESIZE:
-            window_size = (event.w, event.h)
-            screen = pygame.display.set_mode(window_size, pygame.RESIZABLE)
+            globals.window_size = (event.w, event.h)
+            screen = pygame.display.set_mode(globals.window_size, pygame.RESIZABLE)
         elif event.type == particle_timer_event:
             spawn_background_particle(True)
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -109,16 +96,36 @@ while is_running:
             if event.ui_element == slider:
                 globals.neuron_training_rate = event.value
                 textbox.set_text(f"{globals.neuron_training_rate:.3f}")
+                globals.neuron_training_decay = globals.neuron_training_rate / globals.neuron_training_decay_ratio
+            if event.ui_element == slider1:
+                globals.neuron_training_decay_ratio = event.value
+                textbox1.set_text(f"{globals.neuron_training_decay_ratio:.3f}")
+                globals.neuron_training_decay = globals.neuron_training_rate / globals.neuron_training_decay_ratio
         elif event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
             if event.ui_element == textbox:
                 try:
                     new_value = float(event.text)
                     if 0.001 <= new_value <= 0.1:
                         slider.set_current_value(new_value)
+                        globals.neuron_training_decay = globals.neuron_training_rate / globals.neuron_training_decay_ratio
                     else:
                         textbox.set_text(f"{slider.get_current_value():.3f}")
+                        globals.neuron_training_decay = globals.neuron_training_rate / globals.neuron_training_decay_ratio
                 except ValueError:
                     textbox.set_text(f"{slider.get_current_value():.3f}")
+                    globals.neuron_training_decay = globals.neuron_training_rate / globals.neuron_training_decay_ratio
+            if event.ui_element == textbox1:
+                try:
+                    new_value = float(event.text)
+                    if 0.001 <= new_value <= 0.1:
+                        slider1.set_current_value(new_value)
+                        globals.neuron_training_decay = globals.neuron_training_rate / globals.neuron_training_decay_ratio
+                    else:
+                        textbox1.set_text(f"{slider1.get_current_value():.3f}")
+                        globals.neuron_training_decay = globals.neuron_training_rate / globals.neuron_training_decay_ratio
+                except ValueError:
+                    textbox1.set_text(f"{slider1.get_current_value():.3f}")
+                    globals.neuron_training_decay = globals.neuron_training_rate / globals.neuron_training_decay_ratio
 
         ui_manager.process_events(event)
     
@@ -174,7 +181,7 @@ while is_running:
 
     # Draw a UI base
     ui_base = pygame.Rect(0, WINDOW_HEIGHT - UI_HEIGHT, WINDOW_WIDTH, UI_HEIGHT)
-    pygame.draw.rect(screen, GRAY_300, ui_base)
+    pygame.draw.rect(screen, GRAY_100, ui_base)
 
     # Update and draw training sim
     training_sim.update(is_thrusting)

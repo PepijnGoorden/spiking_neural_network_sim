@@ -106,9 +106,9 @@ class Neuron:
 
             for connection in self.connections_to:
                 # if connection weight will not go below 0
-                if not connection.weight - TRAINING_DECAY <= 0:
+                if not connection.weight - globals.neuron_training_decay <= 0:
                     # reduce the connection weight
-                    connection.weight -= TRAINING_DECAY
+                    connection.weight -= globals.neuron_training_decay
             
             # Check if threshold is reached
             if self.membrane_potential >= V_THRESHOLD:

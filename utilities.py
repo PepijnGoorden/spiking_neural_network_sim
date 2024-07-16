@@ -1,15 +1,15 @@
 import pygame
 from settings import *
+from globals import *
 from neuron import *
 
 def initial_setup():
     pygame.init()
-    pygame.display.set_caption("Neural Network Simulation")
-    window_size = (WINDOW_WIDTH, WINDOW_HEIGHT)
+    pygame.display.set_caption(TITLE)
     screen = pygame.display.set_mode(window_size, pygame.RESIZABLE)
     clock = pygame.time.Clock()
     is_running = True
-    return window_size, screen, clock, is_running
+    return screen, clock, is_running
 
 # Global variables for mouse offset
 current_mouse_offset = pygame.math.Vector2(0, 0)
