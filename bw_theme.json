@@ -1,0 +1,74 @@
+{
+    "defaults":
+    {
+        "colours":
+        {
+            "normal_bg": "#ffffff",
+            "hovered_bg": "#ffffff",
+            "disabled_bg": "#CCFFFF",
+            "selected_bg": "#ffffff",
+            "dark_bg": "#ffffff",
+            "normal_text": "#000000",
+            "hovered_text": "#000000",
+            "selected_text": "#000000",
+            "disabled_text": "#808080",
+            "link_text": "#000000",
+            "link_hover": "#404040",
+            "link_selected": "#000000",
+            "text_shadow": "#FFFFFF",
+            "normal_border": "#000000",
+            "hovered_border": "#000000",
+            "disabled_border": "#C0C0C0",
+            "selected_border": "#000000",
+            "active_border": "#000000",
+            "filled_bar": "#000000",
+            "unfilled_bar": "#CCCCCC"
+        }
+    },
+    "horizontal_slider":
+    {
+        "colours":
+        {
+            "normal_bg": "#FF0000",
+            "hovered_bg": "#FF0000",
+            "disabled_bg": "#FF0000",
+            "selected_bg": "#FF0000",
+            "active_bg": "#ffffff",
+            "dark_bg": "#ffffff"
+        },
+        "misc":
+        {
+            "shape": "rectangle",
+            "shape_corner_radius": "0",
+            "border_width": "1",
+            "sliding_button_width": "10"
+        }
+    },
+    "@labels":
+    {
+        "colours":
+        {
+            "normal_text": "#000000",
+            "text_shadow": "#FFFFFF"
+        },
+        "font":
+        {
+            "name": "fira_code",
+            "size": "16",
+            "bold": "0",
+            "italic": "0",
+            "regular_resource": {
+                "package": "pygame_gui.data",
+                "resource": "FiraCode-Regular.ttf"
+            }
+        }
+    },
+    "#neuron_rate_label":
+    {
+        "colours":
+        {
+            "normal_text": "#000000",
+            "text_shadow": "#FFFFFF"
+        }
+    }
+}

@@ -10,7 +10,7 @@ pygame.init()
 pygame.display.set_mode((1, 1), pygame.NOFRAME)
 
 particle_group = pygame.sprite.Group()
-PARTICLE_TIMER_EVENT = pygame.USEREVENT + 1
+PARTICLE_TIMER_EVENT = pygame.event.custom_type()
 
 # Load particle sprites
 bg_particle_sprites = []

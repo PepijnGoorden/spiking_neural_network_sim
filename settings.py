@@ -15,6 +15,9 @@ FOCUS_DEPTH = 20
 PARALAX_SCALE = 0.2  # Adjust this factor to control the speed of the parallax effect
 PARALAX_EASING = 10.0  # Adjust this value to control the speed of easing (lower is slower)
 
+# UI
+UI_HEIGHT = 210
+
 # Particles
 PARTICLE_SPAWN_INTERVAL = 250
 MAX_PARTICLE_COUNT = 20
@@ -24,8 +27,8 @@ NEURON_RADIUS = 10
 NEURON_COLOR = BLACK
 SPIKE_COLOR = WHITE
 ACTION_POTENTIAL = 4
-TRAINING_RATE = 0.01
-TRAINING_DECAY = TRAINING_RATE / 5
+STARTING_TRAINING_RATE = 0.01
+TRAINING_DECAY = STARTING_TRAINING_RATE / 5
 # RC Circuit parameters
 V_MAX = 5  # Maximum voltage in volts
 V_THRESHOLD = 0.6 * V_MAX  # Threshold voltage for spiking

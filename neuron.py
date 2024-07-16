@@ -4,6 +4,7 @@ from random import uniform
 from settings import *
 import os
 from enum import Enum, auto
+import globals
 
 pygame.init()
 pygame.display.set_mode((1, 1), pygame.NOFRAME)
@@ -71,7 +72,7 @@ class Neuron:
                 propagating_connections.remove(connection)
 
                 # Increase connection weight
-                connection.weight += TRAINING_RATE
+                connection.weight += globals.neuron_training_rate
 
                 # Stimulate receiving neuron, if it is not firing
                 if not connection.receiving_neuron.is_firing:

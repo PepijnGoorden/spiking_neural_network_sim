@@ -1,4 +1,5 @@
 import pygame
+import pygame_gui
 import sys
 from random import randint, uniform
 from settings import *
@@ -6,9 +7,44 @@ from utilities import *
 from particles import *
 from neuron import *
 from training_sim import *
+import globals
 
 # Initialize Pygame
-screen, clock, is_running = initial_setup()
+window_size, screen, clock, is_running = initial_setup()
+
+# Create a UI Manager
+ui_manager = pygame_gui.UIManager(window_size, 'bw_theme.json')
+
+# Calculate positions
+slider_width = 150
+slider_height = 20
+textbox_width = 50
+textbox_height = 20
+margin_left = 20
+margin_bottom = 20
+
+# Create a label
+label = pygame_gui.elements.UILabel(
+    relative_rect=pygame.Rect((margin_left, window_size[1] - margin_bottom - slider_height - 30), (200, 30)),
+    text="Neuron Training Rate",
+    manager=ui_manager,
+    object_id=pygame_gui.core.ObjectID(class_id="@labels", object_id="#neuron_rate_label")
+)
+
+# Create a slider
+slider = pygame_gui.elements.UIHorizontalSlider(
+    relative_rect=pygame.Rect((margin_left, window_size[1] - margin_bottom - slider_height), (slider_width, slider_height)),
+    start_value=globals.neuron_training_rate,
+    value_range=(0.001, 0.1),
+    manager=ui_manager
+)
+
+# Create a textbox
+textbox = pygame_gui.elements.UITextEntryLine(
+    relative_rect=pygame.Rect((margin_left + slider_width + 10, window_size[1] - margin_bottom - textbox_height), (textbox_width, textbox_height)),
+    manager=ui_manager
+)
+textbox.set_text(f"{slider.get_current_value():.3f}")
 
 # Setup particle timer
 particle_timer_event = setup_particle_timer()
@@ -44,7 +80,7 @@ while is_running:
         elif event.type == particle_timer_event:
             spawn_background_particle(True)
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:  # Left click
+            if event.button == 1 and event.pos[1] < WINDOW_HEIGHT - UI_HEIGHT:  # Left click
                 neuron = get_neuron_at_pos(event.pos)
                 if neuron:
                     dragging = True
@@ -69,6 +105,24 @@ while is_running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 neuron_info = not neuron_info
+        elif event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
+            if event.ui_element == slider:
+                globals.neuron_training_rate = event.value
+                textbox.set_text(f"{globals.neuron_training_rate:.3f}")
+        elif event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
+            if event.ui_element == textbox:
+                try:
+                    new_value = float(event.text)
+                    if 0.001 <= new_value <= 0.1:
+                        slider.set_current_value(new_value)
+                    else:
+                        textbox.set_text(f"{slider.get_current_value():.3f}")
+                except ValueError:
+                    textbox.set_text(f"{slider.get_current_value():.3f}")
+
+        ui_manager.process_events(event)
+    
+    ui_manager.update(dt)
 
     # Check if mouse hovers a neuron
     hovered_neuron = get_neuron_at_pos(pygame.mouse.get_pos())
@@ -88,7 +142,6 @@ while is_running:
             if not neuron.is_firing:
                 position_low_input, position_high_input, velocity_input = stimulate_neuron_with_game_output(training_sim.position_data, training_sim.velocity)
                 neuron.membrane_potential += position_low_input
-                print(f"Too low: {position_low_input}")
         if neuron.neuron_type == NeuronType.VELOCITY_INPUT:
             if not neuron.is_firing:
                 position_low_input, position_high_input, velocity_input = stimulate_neuron_with_game_output(training_sim.position_data, training_sim.velocity)
@@ -119,9 +172,15 @@ while is_running:
     # Draw vignette on top of everything
     screen.blit(vignette, (0, 0))
 
+    # Draw a UI base
+    ui_base = pygame.Rect(0, WINDOW_HEIGHT - UI_HEIGHT, WINDOW_WIDTH, UI_HEIGHT)
+    pygame.draw.rect(screen, GRAY_300, ui_base)
+
     # Update and draw training sim
     training_sim.update(is_thrusting)
     training_sim.draw(training_surface)
+
+    ui_manager.draw_ui(screen)
 
     # Draw training sim to the bottom right corner of the main screen
     screen.blit(training_surface, (WINDOW_WIDTH - TRAINING_WIDTH, WINDOW_HEIGHT - TRAINING_HEIGHT))

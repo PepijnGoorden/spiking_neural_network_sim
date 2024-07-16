@@ -9,7 +9,7 @@ def initial_setup():
     screen = pygame.display.set_mode(window_size, pygame.RESIZABLE)
     clock = pygame.time.Clock()
     is_running = True
-    return screen, clock, is_running
+    return window_size, screen, clock, is_running
 
 # Global variables for mouse offset
 current_mouse_offset = pygame.math.Vector2(0, 0)
