@@ -33,7 +33,7 @@ class TrainingSim:
         
         # Apply thrust if up arrow is pressed
         if is_thrusting:
-            self.velocity += self.thrust * self.time_scale
+            self.velocity += self.thrust #* self.time_scale
         
         # Limit velocity
         self.velocity = max(self.MIN_VEL, min(self.velocity, self.MAX_VEL))
