@@ -39,10 +39,14 @@ class TrainingSim:
         self.velocity = max(self.MIN_VEL, min(self.velocity, self.MAX_VEL))
         
         # Update rocket position
-        self.rocket_y += self.velocity * self.time_scale
+        new_y = self.rocket_y + self.velocity * self.time_scale
         
-        # Keep rocket within screen bounds
-        self.rocket_y = max(0, min(self.rocket_y, self.HEIGHT - self.rocket_height))
+        # Check if rocket hits top or bottom
+        if new_y <= 0 or new_y >= self.HEIGHT - self.rocket_height:
+            self.velocity = 0
+            new_y = max(0, min(new_y, self.HEIGHT - self.rocket_height))
+        
+        self.rocket_y = new_y
         
         # Calculate position_data
         self.position_data = int((self.rocket_y + self.rocket_height / 2 - self.HEIGHT / 2) / (self.HEIGHT / 2) * 100)
