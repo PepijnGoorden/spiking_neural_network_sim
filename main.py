@@ -38,10 +38,10 @@ for _ in range(MAX_PARTICLE_COUNT):
 # TRAINING SIM #
 # Create input neurons
 input1_position = pygame.math.Vector2(150 + NEURON_RADIUS, (WINDOW_HEIGHT / 2) - (UI_HEIGHT / 2))
-# input2_position = pygame.math.Vector2(150 + NEURON_RADIUS, (WINDOW_HEIGHT / 2) - (UI_HEIGHT / 2) + NEURON_RADIUS + 50)
+input2_position = pygame.math.Vector2(150 + NEURON_RADIUS, (WINDOW_HEIGHT / 2) - (UI_HEIGHT / 2) + NEURON_RADIUS + 50)
 output_position = pygame.math.Vector2(WINDOW_WIDTH - 150 - NEURON_RADIUS, (WINDOW_HEIGHT / 2) - (UI_HEIGHT / 2))
 add_neuron(input1_position, NeuronType.POSITION_INPUT)
-# add_neuron(input2_position, NeuronType.VELOCITY_INPUT)
+add_neuron(input2_position, NeuronType.VELOCITY_INPUT)
 add_neuron(output_position, NeuronType.OUTPUT)
 
 # Create the training sim
