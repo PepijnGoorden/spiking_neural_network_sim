@@ -47,3 +47,8 @@ def add_neuron(pos, neuron_type=NeuronType.REGULAR):
 def remove_neuron(neuron):
     neuron.remove_all_connections()
     neurons.remove(neuron)
+
+def reset_randomize_weights(neurons):
+    for neuron in neurons:
+        for connection in neuron.connections_to:
+            connection.weight = uniform(0.01, 3.0)

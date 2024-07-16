@@ -93,6 +93,8 @@ while is_running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 neuron_info = not neuron_info
+            elif event.key == pygame.K_r:
+                reset_randomize_weights(neurons)
         elif event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
             if event.ui_element == slider:
                 globals.neuron_training_rate = event.value
