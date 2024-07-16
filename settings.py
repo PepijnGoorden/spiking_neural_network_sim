@@ -44,3 +44,7 @@ CONNECTION_SEGMENTS = 20  # Number of segments for the line
 CONNECTION_GROWTH_SPEED = 0.4  # Speed at which the line segments grow
 CONNECTION_COLOR = BLACK
 AXON_SPEED_FACTOR = 100 # multiplies the speed of the signal animation
+
+# TRAINING SIM
+TRAINING_WIDTH = 200
+TRAINING_HEIGHT = 200

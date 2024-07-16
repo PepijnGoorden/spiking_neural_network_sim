@@ -18,6 +18,8 @@ class TrainingSim:
         self.gravity = 0.05
         self.thrust = -0.1
 
+        self.time_scale = 1.0
+
         # Velocity limits
         self.MIN_VEL = self.thrust * 10
         self.MAX_VEL = self.thrust * -10
@@ -27,17 +29,17 @@ class TrainingSim:
 
     def update(self, is_thrusting):
         # Apply gravity
-        self.velocity += self.gravity
+        self.velocity += self.gravity * self.time_scale
         
         # Apply thrust if up arrow is pressed
         if is_thrusting:
-            self.velocity += self.thrust
+            self.velocity += self.thrust * self.time_scale
         
         # Limit velocity
         self.velocity = max(self.MIN_VEL, min(self.velocity, self.MAX_VEL))
         
         # Update rocket position
-        self.rocket_y += self.velocity
+        self.rocket_y += self.velocity * self.time_scale
         
         # Keep rocket within screen bounds
         self.rocket_y = max(0, min(self.rocket_y, self.HEIGHT - self.rocket_height))
@@ -62,6 +64,13 @@ class TrainingSim:
         # Draw the velocity
         vel_text = self.font.render(f"Velocity: {self.velocity * -1:.2f}", True, BLACK)
         surface.blit(vel_text, (10, 26))
+
+        # Draw the time scale
+        time_scale_text = self.font.render(f"Time Scale: {self.time_scale:.2f}", True, BLACK)
+        surface.blit(time_scale_text, (10, 42))
+
+    def set_time_scale(self, scale):
+        self.time_scale = scale
 
 def create_training_sim(width, height):
     return TrainingSim(width, height)

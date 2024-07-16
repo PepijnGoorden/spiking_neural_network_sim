@@ -45,9 +45,10 @@ add_neuron(input1_position, NeuronType.POSITION_INPUT)
 add_neuron(output_position, NeuronType.OUTPUT)
 
 # Create the training sim
-TRAINING_WIDTH, TRAINING_HEIGHT = 200, 200
 training_sim = create_training_sim(TRAINING_WIDTH, TRAINING_HEIGHT)
 training_surface = pygame.Surface((TRAINING_WIDTH, TRAINING_HEIGHT))
+
+training_sim.set_time_scale(0.1)  # Slow down the simulation
 
 #############
  # Main loop #
